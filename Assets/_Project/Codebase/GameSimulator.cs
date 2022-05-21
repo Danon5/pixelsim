@@ -26,6 +26,11 @@ namespace VoxelSim
 
         private void LateUpdate()
         {
+            LoadRegionsAroundCamera();
+        }
+
+        private void LoadRegionsAroundCamera()
+        {
             Vector2Int cameraRegionPos = SpaceConversions.WorldToRegion(_cameraTransform.position);
 
             for (int x = -1; x <= 1; x++)
@@ -39,20 +44,20 @@ namespace VoxelSim
                 float regionDistFromCamera = Vector2.Distance(_cameraTransform.position, regionWorldPos);
 
                 if (regionDistFromCamera < REGION_LOAD_DIST)
-                    CreateRegionAtPosition(regionPos);
+                    LoadRegionAtPosition(regionPos);
             }
 
             foreach (KeyValuePair<Vector2Int, Region> regionEntry in _activeRegions)
             {
                 Vector2 regionWorldPos = SpaceConversions.RegionToWorld(regionEntry.Key) + Region.WorldSpaceSize / 2f;
                 float regionDistFromCamera = Vector2.Distance(_cameraTransform.position, regionWorldPos);
-                
+
                 if (regionDistFromCamera > REGION_LOAD_DIST)
                     _regionsToDestroy.Enqueue(regionEntry.Key);
             }
-            
+
             while (_regionsToDestroy.TryDequeue(out Vector2Int regionPosition))
-                DestroyRegionAtPosition(regionPosition);
+                UnloadRegionAtPosition(regionPosition);
         }
 
         private void OnDrawGizmos()
@@ -75,14 +80,14 @@ namespace VoxelSim
             return _activeRegions.ContainsKey(position);
         }
 
-        private void CreateRegionAtPosition(in Vector2Int position)
+        private void LoadRegionAtPosition(in Vector2Int position)
         {
             Region region = _world.CreateRegionAtPosition(position);
             _worldRenderer.RegisterRegion(region);
             _activeRegions.Add(position, region);
         }
 
-        private void DestroyRegionAtPosition(in Vector2Int position)
+        private void UnloadRegionAtPosition(in Vector2Int position)
         {
             Region region = _activeRegions[position];
             _world.DestroyRegionAtPosition(position);

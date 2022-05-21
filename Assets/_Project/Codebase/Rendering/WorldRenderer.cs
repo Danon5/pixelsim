@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using VoxelSim.Pooling;
 
 namespace VoxelSim.Rendering
 {
@@ -13,7 +14,7 @@ namespace VoxelSim.Rendering
 
         public void RegisterChunk(Chunk chunk)
         {
-            ChunkRenderer chunkRenderer = CreateChunkRenderer(chunk);
+            ChunkRenderer chunkRenderer = ChunkRendererPool.RetrieveFromPool(chunk, this, _chunkRendererPrefab);
             chunkRenderer.AssignChunk(chunk);
             chunkRenderer.Refresh();
             
@@ -22,7 +23,7 @@ namespace VoxelSim.Rendering
 
         public void DeregisterChunk(Chunk chunk)
         {
-            Destroy(_registeredChunks[chunk].gameObject);
+            ChunkRendererPool.SendToPool(_registeredChunks[chunk]);
             _registeredChunks.Remove(chunk);
         }
 
@@ -41,12 +42,6 @@ namespace VoxelSim.Rendering
         public void RefreshChunk(Chunk chunk)
         {
             _registeredChunks[chunk].Refresh();
-        }
-
-        private ChunkRenderer CreateChunkRenderer(Chunk chunk)
-        {
-            return Instantiate(_chunkRendererPrefab, chunk.WorldSpaceCenter, 
-                    Quaternion.identity, transform).GetComponent<ChunkRenderer>();
         }
     }
 }

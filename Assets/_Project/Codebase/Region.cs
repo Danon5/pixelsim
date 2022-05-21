@@ -29,9 +29,9 @@ namespace VoxelSim
             Initialize(position);
         }
 
-        public void Initialize(in Vector2Int position)
+        public void Initialize(in Vector2Int pos)
         {
-            this.position = position;
+            position = pos;
 
             Vector2Int origin = ChunkSpaceOrigin;
             Vector2Int offset = Vector2Int.zero;
@@ -45,7 +45,7 @@ namespace VoxelSim
                 if (chunks[x, y] == null)
                     chunks[x, y] = new Chunk(origin + offset);
                 else
-                    chunks[x, y].Initialize(position);
+                    chunks[x, y].Initialize(origin + offset);
             }
         }
     }

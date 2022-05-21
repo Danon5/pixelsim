@@ -25,9 +25,9 @@ namespace VoxelSim
             Initialize(position);
         }
 
-        public void Initialize(in Vector2Int position)
+        public void Initialize(in Vector2Int pos)
         {
-            this.position = position;
+            position = pos;
             
             for (int x = 0; x < SIZE; x++)
             for (int y = 0; y < SIZE; y++)
