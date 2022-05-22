@@ -10,13 +10,35 @@ namespace VoxelSim.Rendering
         
         public const int PPU = 16;
         
+        private static readonly Queue<Chunk> _chunksToRebuild = new Queue<Chunk>();
+        
         private readonly Dictionary<Chunk, ChunkRenderer> _registeredChunks = new Dictionary<Chunk, ChunkRenderer>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Initialize()
+        {
+            _chunksToRebuild.Clear();
+        }
+
+        private void LateUpdate()
+        {
+            while (_chunksToRebuild.TryDequeue(out Chunk chunk))
+                RebuildChunk(chunk);
+        }
+
+        public static bool TryQueueChunkForRebuild(Chunk chunk)
+        {
+            if (_chunksToRebuild.Contains(chunk)) return false;
+            
+            _chunksToRebuild.Enqueue(chunk);
+            return true;
+        }
 
         public void RegisterChunk(Chunk chunk)
         {
             ChunkRenderer chunkRenderer = ChunkRendererPool.RetrieveFromPool(chunk, this, _chunkRendererPrefab);
             chunkRenderer.AssignChunk(chunk);
-            chunkRenderer.Refresh();
+            chunkRenderer.Rebuild();
             
             _registeredChunks.Add(chunk, chunkRenderer);
         }
@@ -39,9 +61,9 @@ namespace VoxelSim.Rendering
                 DeregisterChunk(chunk);
         }
 
-        public void RefreshChunk(Chunk chunk)
+        public void RebuildChunk(Chunk chunk)
         {
-            _registeredChunks[chunk].Refresh();
+            _registeredChunks[chunk].Rebuild();
         }
     }
 }

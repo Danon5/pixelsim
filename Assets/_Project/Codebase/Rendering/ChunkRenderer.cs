@@ -8,18 +8,19 @@ namespace VoxelSim.Rendering
         [SerializeField] private ComputeShader _chunkTextureCompute;
         [SerializeField] private RawImage _solidRenderImage;
 
-        private ComputeBuffer _voxelBuffer;
+        private ComputeBuffer _pixelBuffer;
         private RenderTexture _resultTexture;
         private Chunk _chunk;
 
         private void Awake()
         {
-            _voxelBuffer = new ComputeBuffer(Chunk.SIZE * Chunk.SIZE, 4);
+            _pixelBuffer = new ComputeBuffer(Chunk.SQR_SIZE, 4);
             
             _resultTexture = new RenderTexture(Chunk.SIZE, Chunk.SIZE, 32)
             {
                 enableRandomWrite = true,
-                useMipMap = false
+                useMipMap = false,
+                filterMode = FilterMode.Point
             };
             _resultTexture.Create();
 
@@ -29,8 +30,13 @@ namespace VoxelSim.Rendering
 
         private void OnDestroy()
         {
-            _voxelBuffer.Release();
+            _pixelBuffer.Release();
             _resultTexture.Release();
+        }
+
+        public void SetRendererActive(bool active)
+        {
+            _solidRenderImage.enabled = active;
         }
 
         public void AssignChunk(Chunk chunk)
@@ -38,7 +44,7 @@ namespace VoxelSim.Rendering
             _chunk = chunk;
         }
 
-        public void Refresh()
+        public void Rebuild()
         {
             if (_chunk == null) return;
 
@@ -48,8 +54,8 @@ namespace VoxelSim.Rendering
         private void UpdateChunkTexture(Chunk chunk)
         {
             _chunkTextureCompute.SetInt("ChunkSize", Chunk.SIZE);
-            _voxelBuffer.SetData(chunk.voxels);
-            _chunkTextureCompute.SetBuffer(0, "VoxelBuffer", _voxelBuffer);
+            _pixelBuffer.SetData(chunk.pixels);
+            _chunkTextureCompute.SetBuffer(0, "PixelBuffer", _pixelBuffer);
             _chunkTextureCompute.SetTexture(0, "ResultTexture", _resultTexture);
             _chunkTextureCompute.Dispatch(0, 
                 _resultTexture.width / 8, 

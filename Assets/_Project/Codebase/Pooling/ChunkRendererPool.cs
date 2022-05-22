@@ -21,7 +21,7 @@ namespace VoxelSim.Pooling
             if (_chunkRendererPool.Count > 0)
             {
                 renderer = _chunkRendererPool.Dequeue();
-                renderer.gameObject.SetActive(true);
+                renderer.SetRendererActive(true);
             }
             else
                 renderer = Object.Instantiate(rendererPrefab).GetComponent<ChunkRenderer>();
@@ -34,7 +34,7 @@ namespace VoxelSim.Pooling
 
         public static void SendToPool(ChunkRenderer renderer)
         {
-            renderer.gameObject.SetActive(false);
+            renderer.SetRendererActive(false);
             _chunkRendererPool.Enqueue(renderer);
         }
     }

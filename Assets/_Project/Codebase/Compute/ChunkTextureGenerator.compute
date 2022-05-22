@@ -6,13 +6,13 @@ struct Voxel
 };
 
 int ChunkSize;
-StructuredBuffer<Voxel> VoxelBuffer;
+StructuredBuffer<Voxel> PixelBuffer;
 RWTexture2D<float4> ResultTexture;
 
 [numthreads(8,8,1)]
 void TextureGen (uint3 i : SV_DispatchThreadID)
 {
-    int id = VoxelBuffer[i.y * ChunkSize + i.x].id;
+    int id = PixelBuffer[i.x * ChunkSize + i.y].id;
     
     if (id == 0)
     {
