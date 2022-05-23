@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
-using VoxelSim.WorldGeneration;
+﻿using PixelSim.Rendering;
+using PixelSim.Utility;
+using PixelSim.WorldGeneration;
+using UnityEngine;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class Region
     {

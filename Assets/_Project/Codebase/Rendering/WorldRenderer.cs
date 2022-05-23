@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using PixelSim.Pooling;
 using UnityEngine;
-using VoxelSim.Pooling;
 
-namespace VoxelSim.Rendering
+namespace PixelSim.Rendering
 {
     public sealed class WorldRenderer : MonoBehaviour
     {

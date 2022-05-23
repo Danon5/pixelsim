@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace VoxelSim.SceneLoading
+namespace PixelSim.SceneLoading
 {
     public static class SceneLoader
     {

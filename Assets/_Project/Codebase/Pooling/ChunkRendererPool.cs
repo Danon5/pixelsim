@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using PixelSim.Rendering;
 using UnityEngine;
-using VoxelSim.Rendering;
 
-namespace VoxelSim.Pooling
+namespace PixelSim.Pooling
 {
     public static class ChunkRendererPool
     {

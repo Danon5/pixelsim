@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
+﻿using PixelSim.Rendering;
+using PixelSim.Utility;
+using UnityEngine;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class Chunk
     {

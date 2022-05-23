@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using VoxelSim.Utility;
+﻿using PixelSim.Utility;
+using UnityEngine;
 
-namespace VoxelSim.DeveloperTools
+namespace PixelSim.DeveloperTools
 {
     public sealed class DevController : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VoxelSim.Utility
+namespace PixelSim.Utility
 {
     public static class SpaceConversions
     {

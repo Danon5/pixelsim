@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using PixelSim.Rendering;
+using PixelSim.Utility;
 using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class World
     {

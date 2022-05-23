@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace VoxelSim.Rendering
+namespace PixelSim.Rendering
 {
     public sealed class ChunkRenderer : MonoBehaviour
     {

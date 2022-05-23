@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using VoxelSim.Rendering;
+﻿using PixelSim.Rendering;
+using UnityEngine;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public struct Pixel
     {

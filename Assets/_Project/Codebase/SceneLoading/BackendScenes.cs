@@ -1,4 +1,4 @@
-﻿namespace VoxelSim.SceneLoading
+﻿namespace PixelSim.SceneLoading
 {
     public static class BackendScenes
     {

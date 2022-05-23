@@ -1,4 +1,4 @@
-﻿namespace VoxelSim
+﻿namespace PixelSim
 {
     public enum PixelId
     {
