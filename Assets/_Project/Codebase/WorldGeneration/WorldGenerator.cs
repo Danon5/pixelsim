@@ -60,9 +60,12 @@ namespace PixelSim.WorldGeneration
                 float x = chunkOrigin.x + (float) xIndex / WorldRenderer.PPU;
                 float y = chunkOrigin.y + (float) yIndex / WorldRenderer.PPU;
 
-                float perlinResult = Mathf.PerlinNoise(seed + x, seed + y);
+                float perlinResult1 = Mathf.PerlinNoise(seed + x * .25f, seed + y * .25f);
+                float perlinResult2 = Mathf.PerlinNoise(seed + x * .75f, seed + y * .75f) * .15f;
 
-                pixel.id = perlinResult > .5f ? PixelId.Dirt : PixelId.None;
+                float finalResult = perlinResult1 + perlinResult2;
+
+                pixel.id = finalResult > .5f ? PixelId.Dirt : PixelId.None;
                 
                 pixels[index] = pixel;
             }

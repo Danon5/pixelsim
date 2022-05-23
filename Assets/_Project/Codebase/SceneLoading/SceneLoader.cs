@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,33 +10,41 @@ namespace PixelSim.SceneLoading
         private static readonly List<string> _loadedFrontendScenes = new List<string>();
         private static readonly List<string> _loadedBackendScenes = new List<string>();
         private static string _loadedMapScene = string.Empty;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Initialize()
+        {
+            _loadedFrontendScenes?.Clear();
+            _loadedBackendScenes?.Clear();
+            _loadedMapScene = string.Empty;
+        }
         
-        public static async Task LoadFrontendScene(string sceneName, bool setAsActiveScene = false)
+        public static async UniTask LoadFrontendScene(string sceneName, bool setAsActiveScene = false)
         {
             await LoadSceneAsync(sceneName, _loadedFrontendScenes, setAsActiveScene);
         }
 
-        public static async Task UnloadAllFrontendScenes()
+        public static async UniTask UnloadAllFrontendScenes()
         {
             await UnloadScenesAsync(_loadedFrontendScenes);
         }
 
-        public static async Task LoadBackendScene(string sceneName)
+        public static async UniTask LoadBackendScene(string sceneName)
         {
             await LoadSceneAsync(sceneName, _loadedBackendScenes);
         }
         
-        public static async Task UnloadAllBackendScenes()
+        public static async UniTask UnloadAllBackendScenes()
         {
             await UnloadScenesAsync(_loadedBackendScenes);
         }
 
-        public static async Task LoadMapScene(string sceneName)
+        public static async UniTask LoadMapScene(string sceneName)
         {
             await LoadSceneAsync(sceneName);
         }
         
-        public static async Task UnloadMapScene()
+        public static async UniTask UnloadMapScene()
         {
             if (_loadedMapScene.Equals(string.Empty)) return;
             
@@ -45,28 +53,28 @@ namespace PixelSim.SceneLoading
             await UnloadSceneAsync(_loadedMapScene);
         }
 
-        private static async Task LoadSceneAsync(string sceneName, List<string> sceneList = null, bool setAsActiveScene = false)
+        private static async UniTask LoadSceneAsync(string sceneName, List<string> sceneList = null, bool setAsActiveScene = false)
         {
             AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             sceneList?.Add(sceneName);
 
             while (!operation.isDone)
-                await Task.Yield();
+                await UniTask.Yield();
 
             if (setAsActiveScene)
                 SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
         
-        private static async Task UnloadSceneAsync(string sceneName, List<string> sceneList = null)
+        private static async UniTask UnloadSceneAsync(string sceneName, List<string> sceneList = null)
         {
             AsyncOperation operation = SceneManager.UnloadSceneAsync(sceneName);
             sceneList?.Remove(sceneName);
 
             while (!operation.isDone)
-                await Task.Yield();
+                await UniTask.Yield();
         }
 
-        private static async Task UnloadScenesAsync(List<string> scenes)
+        private static async UniTask UnloadScenesAsync(List<string> scenes)
         {
             if (scenes == null || scenes.Count == 0) return;
             
@@ -90,7 +98,7 @@ namespace PixelSim.SceneLoading
                     }
                 }
 
-                await Task.Yield();
+                await UniTask.Yield();
             }
         }
     }
