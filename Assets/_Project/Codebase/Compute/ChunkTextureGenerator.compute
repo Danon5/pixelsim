@@ -46,7 +46,7 @@ void TextureGen (uint3 i : SV_DispatchThreadID)
     else
     {
         float2 worldPos = CalcWorldPos(i);
-        float distFromAir = CalcDistFromAir(worldPos);
+        float distFromAir = CalcDistFromAir(worldPos, 5);
     
         _ResultTexture[i.xy] = _Tex_Dirt_Course.SampleLevel(_PointRepeatSampler, worldPos, 0);
     }
