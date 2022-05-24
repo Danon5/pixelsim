@@ -63,12 +63,7 @@ namespace PixelSim.Physics
                 if (IsSolidPixelIndex(index) && !IsSolidPixelIndex(index + Vector2Int.left))
                 {
                     rawPaths.Add(new List<Vector2>());
-                    PerformEdgeDetection(index, checkedIndices, rawPaths[^1], true);
-                }
-                else if (!IsSolidPixelIndex(index) && IsSolidPixelIndex(index + Vector2Int.left))
-                {
-                    rawPaths.Add(new List<Vector2>());
-                    PerformEdgeDetection(index, checkedIndices, rawPaths[^1], false);
+                    PerformEdgeDetection(index, checkedIndices, rawPaths[^1]);
                 }
             }
 
@@ -76,14 +71,13 @@ namespace PixelSim.Physics
 
             for (int i = 0; i < _collider.pathCount; i++)
             {
-                CreateNewVertexPath().AddRange(rawPaths[i]);
-                //LineUtility.Simplify(rawPaths[i], PATH_SIMPLIFICATION_TOLERANCE, CreateNewVertexPath());
+                LineUtility.Simplify(rawPaths[i], PATH_SIMPLIFICATION_TOLERANCE, CreateNewVertexPath());
                 _collider.SetPath(i, _vertexPaths[i]);
             }
         }
 
         private void PerformEdgeDetection(in Vector2Int originIndex, 
-            in HashSet<Vector2Int> checkedIndices, in List<Vector2> path, bool isOuter)
+            in HashSet<Vector2Int> checkedIndices, in List<Vector2> path)
         {
             Vector2Int currentIndex = originIndex;
             Vector2Int currentDirection = Vector2Int.up;
@@ -92,7 +86,7 @@ namespace PixelSim.Physics
 
             do
             {
-                if (isOuter)
+                if (currentDirection == Vector2Int.up || currentDirection == Vector2Int.right)
                 {
                     // UP
                     if (IsSolidPixelIndex(currentIndex) &&
@@ -116,25 +110,25 @@ namespace PixelSim.Physics
                 }
                 else
                 {
-                    // UP
-                    if (!IsSolidPixelIndex(currentIndex) &&
-                        IsSolidPixelIndex(currentIndex + Vector2Int.left))
-                        currentDirection = Vector2Int.up;
-                    
-                    // RIGHT
-                    if (!IsSolidPixelIndex(currentIndex + Vector2Int.down) &&
-                        IsSolidPixelIndex(currentIndex))
-                        currentDirection = Vector2Int.right;
-                    
                     // DOWN
-                    if (!IsSolidPixelIndex(currentIndex - Vector2Int.one) &&
-                        IsSolidPixelIndex(currentIndex + Vector2Int.down))
+                    if (IsSolidPixelIndex(currentIndex - Vector2Int.one) &&
+                        !IsSolidPixelIndex(currentIndex + Vector2Int.down))
                         currentDirection = Vector2Int.down;
-                    
+
                     // LEFT
-                    if (!IsSolidPixelIndex(currentIndex + Vector2Int.left) &&
-                        IsSolidPixelIndex(currentIndex - Vector2Int.one))
+                    if (IsSolidPixelIndex(currentIndex + Vector2Int.left) &&
+                        !IsSolidPixelIndex(currentIndex - Vector2Int.one))
                         currentDirection = Vector2Int.left;
+                    
+                    // UP
+                    if (IsSolidPixelIndex(currentIndex) &&
+                        !IsSolidPixelIndex(currentIndex + Vector2Int.left))
+                        currentDirection = Vector2Int.up;
+
+                    // RIGHT
+                    if (IsSolidPixelIndex(currentIndex + Vector2Int.down) &&
+                        !IsSolidPixelIndex(currentIndex))
+                        currentDirection = Vector2Int.right;
                 }
 
                 path.Add(SpaceConversions.PixelToChunkLocal(currentIndex));
