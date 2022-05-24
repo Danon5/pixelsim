@@ -5,6 +5,9 @@ namespace PixelSim.DeveloperTools
 {
     public sealed class DevController : MonoBehaviour
     {
+        [SerializeField] private GameObject _physicsCirclePrefab;
+        [SerializeField] private GameObject _physicsSquarePrefab;
+        
         private Camera _camera;
 
         private void Awake()
@@ -21,16 +24,10 @@ namespace PixelSim.DeveloperTools
             else if (Input.GetKey(KeyCode.Mouse1))
                 World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Dirt);
 
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                foreach (Region region in World.Current.Regions)
-                {
-                    foreach (Chunk chunk in region.chunks)
-                    {
-                        World.Current.Physics.RegenerateChunk(chunk);
-                    }
-                }
-            }
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+                Instantiate(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+                Instantiate(_physicsSquarePrefab, worldMousePos, Quaternion.identity);
 
             Vector2 moveAxis = new Vector2(
                 Input.GetAxisRaw("Horizontal"), 

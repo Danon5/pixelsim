@@ -97,3 +97,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b330b2f80fd14f1d8ceeb1cee48746e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _physicsCirclePrefab: {fileID: 2979065209194711249, guid: 16dca5d7a9847fa4987f783d45bede89, type: 3}
+  _physicsSquarePrefab: {fileID: 9120608946820894162, guid: 3e86833c97057304eab30cbf910701b0, type: 3}
