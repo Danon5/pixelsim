@@ -1,4 +1,5 @@
 ﻿using PixelSim.ECS;
+using PixelSim.Physics;
 using PixelSim.Rendering;
 using PixelSim.Utility;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace PixelSim
     {
         [SerializeField] private ECSManager _ecsManager;
         [SerializeField] private WorldRenderer _worldRenderer;
+        [SerializeField] private WorldPhysics _worldPhysics;
         [SerializeField] private Transform _cameraTransform;
 
         private const float REGION_LOAD_DIST = 75f;
@@ -17,14 +19,16 @@ namespace PixelSim
 
         private void Awake()
         {
-            _world = new World(_worldRenderer, _cameraTransform);
+            _world = new World(_worldRenderer, _worldPhysics, _cameraTransform);
             
-            LoadInitialRegions();
+            _world.LoadRegionAtPosition(new Vector2Int(0, 0), true);
+            
+            //LoadInitialRegions();
         }
 
         private void LateUpdate()
         {
-            LoadRegionsAroundCamera();
+            //LoadRegionsAroundCamera();
         }
 
         private void LoadInitialRegions()
@@ -54,7 +58,7 @@ namespace PixelSim
                 float regionDistFromCamera = Vector2.Distance(_cameraTransform.position, regionWorldPos);
 
                 if (regionDistFromCamera < REGION_LOAD_DIST)
-                    _world.LoadRegionAtPosition(regionPos);
+                    _world.LoadRegionAtPosition(regionPos, false);
             }
         }
 

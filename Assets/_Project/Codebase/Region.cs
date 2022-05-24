@@ -1,4 +1,5 @@
-﻿using PixelSim.Rendering;
+﻿using PixelSim.Physics;
+using PixelSim.Rendering;
 using PixelSim.Utility;
 using PixelSim.WorldGeneration;
 using UnityEngine;
@@ -80,6 +81,7 @@ namespace PixelSim
         {
             await WorldGenerator.GenerateChunk(chunk);
             WorldRenderer.TryQueueChunkForRebuild(chunk);
+            WorldPhysics.TryQueueChunkForRegeneration(chunk);
         }
     }
 }

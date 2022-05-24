@@ -25,6 +25,8 @@ namespace PixelSim.Pooling
             }
             else
                 renderer = Object.Instantiate(rendererPrefab).GetComponent<ChunkRenderer>();
+            
+            renderer.AssignChunk(chunk);
 
             renderer.transform.parent = worldRenderer.transform;
             renderer.transform.position = (Vector2)chunk.WorldSpaceOrigin;

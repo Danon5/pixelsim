@@ -37,7 +37,6 @@ namespace PixelSim.Rendering
         public void RegisterChunk(Chunk chunk)
         {
             ChunkRenderer chunkRenderer = ChunkRendererPool.RetrieveFromPool(chunk, this, _chunkRendererPrefab);
-            chunkRenderer.AssignChunk(chunk);
             chunkRenderer.Rebuild();
             
             _registeredChunks.Add(chunk, chunkRenderer);

@@ -65,7 +65,7 @@ namespace PixelSim.WorldGeneration
 
                 float finalResult = perlinResult1 + perlinResult2;
 
-                pixel.id = finalResult > .5f ? PixelId.Dirt : PixelId.None;
+                pixel.id = finalResult > .5f ? PixelId.Dirt : PixelId.Air;
                 
                 pixels[index] = pixel;
             }

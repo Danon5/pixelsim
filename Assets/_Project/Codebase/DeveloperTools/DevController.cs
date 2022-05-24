@@ -17,9 +17,20 @@ namespace PixelSim.DeveloperTools
             Vector2 worldMousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
 
             if (Input.GetKey(KeyCode.Mouse0))
-                World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.None);
+                World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Air);
             else if (Input.GetKey(KeyCode.Mouse1))
                 World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Dirt);
+
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                foreach (Region region in World.Current.Regions)
+                {
+                    foreach (Chunk chunk in region.chunks)
+                    {
+                        World.Current.Physics.RegenerateChunk(chunk);
+                    }
+                }
+            }
 
             Vector2 moveAxis = new Vector2(
                 Input.GetAxisRaw("Horizontal"), 

@@ -32,6 +32,11 @@ namespace PixelSim.Utility
                 regionPos.y * Region.WorldSpaceSize.y);
         }
 
+        public static Vector2 PixelToChunkLocal(in Vector2Int pixelPos)
+        {
+            return pixelPos * Pixel.WorldSpaceSize;
+        }
+
         public static Vector2Int RegionToChunk(in Vector2Int regionPos)
         {
             return regionPos * Region.SIZE;
