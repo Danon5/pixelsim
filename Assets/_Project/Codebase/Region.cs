@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
-using VoxelSim.WorldGeneration;
+﻿using PixelSim.Physics;
+using PixelSim.Rendering;
+using PixelSim.Utility;
+using PixelSim.WorldGeneration;
+using UnityEngine;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class Region
     {
@@ -80,6 +81,7 @@ namespace VoxelSim
         {
             await WorldGenerator.GenerateChunk(chunk);
             WorldRenderer.TryQueueChunkForRebuild(chunk);
+            WorldPhysics.TryQueueChunkForRegeneration(chunk);
         }
     }
 }

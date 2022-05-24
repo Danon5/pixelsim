@@ -1,25 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using PixelSim.Physics;
+using PixelSim.Rendering;
+using PixelSim.Utility;
 using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class World
     {
         public List<Region> Regions => _availableRegions;
 
         private readonly WorldRenderer _worldRenderer;
+        private readonly WorldPhysics _worldPhysics;
         private readonly Transform _cameraTransform;
         private readonly Dictionary<Vector2Int, Region> _activeRegions = new Dictionary<Vector2Int, Region>();
         private readonly List<Region> _availableRegions = new List<Region>();
         
         public static World Current { get; private set; }
 
-        public World(WorldRenderer worldRenderer, Transform cameraTransform)
+        public WorldRenderer Renderer => _worldRenderer;
+        public WorldPhysics Physics => _worldPhysics;
+
+        public World(WorldRenderer worldRenderer, WorldPhysics worldPhysics, Transform cameraTransform)
         {
             _worldRenderer = worldRenderer;
+            _worldPhysics = worldPhysics;
             _cameraTransform = cameraTransform;
             Current = this;
         }
@@ -51,9 +57,14 @@ namespace VoxelSim
 
             int index = IndexConversions.WorldToPixelIndex(worldPos, chunk);
 
+            PixelId originalId = chunk.pixels[index].id;
             chunk.pixels[index].id = id;
-            
-            WorldRenderer.TryQueueChunkForRebuild(chunk);
+
+            if (originalId != id)
+            {
+                WorldRenderer.TryQueueChunkForRebuild(chunk);
+                WorldPhysics.TryQueueChunkForRegeneration(chunk);
+            }
         }
 
         public void SetPixelCircleAtPos(in Vector2 worldPos, in int pixelRadius, in PixelId id)
@@ -79,7 +90,7 @@ namespace VoxelSim
             return _activeRegions.ContainsKey(position);
         }
         
-        public void LoadRegionAtPosition(in Vector2Int position, in bool createNew = false)
+        public void LoadRegionAtPosition(in Vector2Int position, in bool createNew)
         {
             if (!createNew && _availableRegions.Count == 0)
                 throw new Exception("Trying to load pooled region when pool is empty.");
@@ -90,6 +101,7 @@ namespace VoxelSim
             {
                 region = new Region(position);
                 _worldRenderer.RegisterRegion(region);
+                _worldPhysics.RegisterRegion(region);
                 _activeRegions.Add(position, region);
                 _availableRegions.Add(region);
             }
@@ -97,6 +109,7 @@ namespace VoxelSim
             {
                 region = GetFurthestAvailableRegionFromCamera();
                 _worldRenderer.DeregisterRegion(region);
+                _worldPhysics.DeregisterRegion(region);
                 _activeRegions.Remove(region.position);
                 region.Initialize(position);
                 _worldRenderer.RegisterRegion(region);
@@ -121,9 +134,16 @@ namespace VoxelSim
                 if (!TryGetValidPixelIndexFromRoot(indexPos, rootChunk, 
                     out Vector2Int validIndexPos, out Chunk validChunk)) continue;
 
-                validChunk.pixels[IndexConversions.Index2DTo1D(validIndexPos, Chunk.SIZE)].id = id;
+                int index = IndexConversions.Index2DTo1D(validIndexPos, Chunk.SIZE);
+                
+                PixelId originalId = validChunk.pixels[index].id;
+                validChunk.pixels[index].id = id;
 
-                WorldRenderer.TryQueueChunkForRebuild(validChunk);
+                if (originalId != id)
+                {
+                    WorldRenderer.TryQueueChunkForRebuild(validChunk);
+                    WorldPhysics.TryQueueChunkForRegeneration(validChunk);
+                }
             }
         }
 

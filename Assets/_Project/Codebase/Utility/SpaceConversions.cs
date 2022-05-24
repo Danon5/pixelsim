@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VoxelSim.Utility
+namespace PixelSim.Utility
 {
     public static class SpaceConversions
     {
@@ -30,6 +30,11 @@ namespace VoxelSim.Utility
             return new Vector2(
                 regionPos.x * Region.WorldSpaceSize.x,
                 regionPos.y * Region.WorldSpaceSize.y);
+        }
+
+        public static Vector2 PixelToChunkLocal(in Vector2Int pixelPos)
+        {
+            return pixelPos * Pixel.WorldSpaceSize;
         }
 
         public static Vector2Int RegionToChunk(in Vector2Int regionPos)

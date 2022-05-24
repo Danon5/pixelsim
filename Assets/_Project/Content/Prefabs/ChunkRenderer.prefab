@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8582024297755968001}
   - component: {fileID: 5831613201356302317}
   - component: {fileID: 773076483296402347}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: SolidRenderImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7663195697609857947}
   - component: {fileID: 7663195697609857940}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ChunkRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

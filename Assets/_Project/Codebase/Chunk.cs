@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using VoxelSim.Rendering;
-using VoxelSim.Utility;
+﻿using PixelSim.Rendering;
+using PixelSim.Utility;
+using UnityEngine;
 
-namespace VoxelSim
+namespace PixelSim
 {
     public sealed class Chunk
     {
@@ -30,6 +30,18 @@ namespace VoxelSim
         {
             pixels = new Pixel[SIZE * SIZE];
             Initialize(position);
+        }
+
+        public bool TryGetPixelAtIndex(in int x, in int y, out Pixel pixel)
+        {
+            pixel = default;
+            
+            if (x < 0 || x >= SIZE ||
+                y < 0 || y >= SIZE)
+                return false;
+
+            pixel = pixels[IndexConversions.Index2DTo1D(x, y, SIZE)];
+            return true;
         }
         
         public bool TryGetPixelAtIndex(in Vector2Int index, out Pixel pixel)

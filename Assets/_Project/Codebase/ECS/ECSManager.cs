@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VoxelSim.ECS
+namespace PixelSim.ECS
 {
     public sealed class ECSManager : MonoBehaviour
     {

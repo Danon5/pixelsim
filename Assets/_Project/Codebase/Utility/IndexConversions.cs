@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 
-namespace VoxelSim.Utility
+namespace PixelSim.Utility
 {
     public static class IndexConversions
     {
+        public static int Index2DTo1D(in int x, in int y, in int size)
+        {
+            return x * size + y;
+        }
+        
         public static int Index2DTo1D(in Vector2Int index, in int size)
         {
             return index.x * size + index.y;

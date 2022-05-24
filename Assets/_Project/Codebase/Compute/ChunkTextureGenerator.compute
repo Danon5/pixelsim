@@ -5,21 +5,49 @@ struct Voxel
     int id;
 };
 
-int ChunkSize;
-StructuredBuffer<Voxel> PixelBuffer;
-RWTexture2D<float4> ResultTexture;
+// TEXTURES
+Texture2D _Tex_Dirt_Course;
+
+// SAMPLERS
+SamplerState _PointRepeatSampler;
+
+// PARAMETERS
+int _ChunkSize;
+float2 _ChunkPos;
+int _PPU;
+StructuredBuffer<Voxel> _PixelBuffer;
+
+// OUTPUT
+RWTexture2D<float4> _ResultTexture;
+
+float2 CalcWorldPos(uint3 i)
+{
+    float4 worldPos = float4(i.x / (float) _ChunkSize, i.y / (float) _ChunkSize, 0, 0);
+    worldPos.x += _ChunkPos.x * (float) _ChunkSize / (float) _PPU;
+    worldPos.y += _ChunkPos.y * (float) _ChunkSize / (float) _PPU;
+    
+    return worldPos;
+}
+
+float CalcDistFromAir(float2 worldPos, int maxCheckRange)
+{
+    return 0;
+}
 
 [numthreads(8,8,1)]
 void TextureGen (uint3 i : SV_DispatchThreadID)
 {
-    int id = PixelBuffer[i.x * ChunkSize + i.y].id;
+    int id = _PixelBuffer[i.x * _ChunkSize + i.y].id;
     
     if (id == 0)
     {
-        ResultTexture[i.xy] = float4(0, 0, 0, 0);
+        _ResultTexture[i.xy] = float4(0, 0, 0, 0);
     }
     else
     {
-        ResultTexture[i.xy] = float4(.31, .2, .14, 1);
+        float2 worldPos = CalcWorldPos(i);
+        float distFromAir = CalcDistFromAir(worldPos, 5);
+    
+        _ResultTexture[i.xy] = _Tex_Dirt_Course.SampleLevel(_PointRepeatSampler, worldPos, 0);
     }
 }

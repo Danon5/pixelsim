@@ -1,10 +1,13 @@
-﻿using UnityEngine;
-using VoxelSim.Utility;
+﻿using PixelSim.Utility;
+using UnityEngine;
 
-namespace VoxelSim.DeveloperTools
+namespace PixelSim.DeveloperTools
 {
     public sealed class DevController : MonoBehaviour
     {
+        [SerializeField] private GameObject _physicsCirclePrefab;
+        [SerializeField] private GameObject _physicsSquarePrefab;
+        
         private Camera _camera;
 
         private void Awake()
@@ -17,9 +20,14 @@ namespace VoxelSim.DeveloperTools
             Vector2 worldMousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
 
             if (Input.GetKey(KeyCode.Mouse0))
-                World.Current.SetPixelCircleAtPos(worldMousePos, 75, PixelId.None);
+                World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Air);
             else if (Input.GetKey(KeyCode.Mouse1))
-                World.Current.SetPixelCircleAtPos(worldMousePos, 75, PixelId.Dirt);
+                World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Dirt);
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+                Instantiate(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+                Instantiate(_physicsSquarePrefab, worldMousePos, Quaternion.identity);
 
             Vector2 moveAxis = new Vector2(
                 Input.GetAxisRaw("Horizontal"), 

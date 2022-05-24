@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using PixelSim.Rendering;
 using UnityEngine;
-using VoxelSim.Rendering;
 
-namespace VoxelSim.Pooling
+namespace PixelSim.Pooling
 {
     public static class ChunkRendererPool
     {
@@ -25,6 +25,8 @@ namespace VoxelSim.Pooling
             }
             else
                 renderer = Object.Instantiate(rendererPrefab).GetComponent<ChunkRenderer>();
+            
+            renderer.AssignChunk(chunk);
 
             renderer.transform.parent = worldRenderer.transform;
             renderer.transform.position = (Vector2)chunk.WorldSpaceOrigin;

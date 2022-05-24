@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using PixelSim.Pooling;
 using UnityEngine;
-using VoxelSim.Pooling;
 
-namespace VoxelSim.Rendering
+namespace PixelSim.Rendering
 {
     public sealed class WorldRenderer : MonoBehaviour
     {
@@ -37,7 +37,6 @@ namespace VoxelSim.Rendering
         public void RegisterChunk(Chunk chunk)
         {
             ChunkRenderer chunkRenderer = ChunkRendererPool.RetrieveFromPool(chunk, this, _chunkRendererPrefab);
-            chunkRenderer.AssignChunk(chunk);
             chunkRenderer.Rebuild();
             
             _registeredChunks.Add(chunk, chunkRenderer);
