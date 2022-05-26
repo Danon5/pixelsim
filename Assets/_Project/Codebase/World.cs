@@ -113,6 +113,7 @@ namespace PixelSim
                 _activeRegions.Remove(region.position);
                 region.Initialize(position);
                 _worldRenderer.RegisterRegion(region);
+                _worldPhysics.RegisterRegion(region);
                 _activeRegions.Add(region.position, region);
             }
         }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PixelSim.ScriptableObjects.AssetReferencers
+namespace PixelSim.DataContainers.AssetReferencers
 {
     [CreateAssetMenu(fileName = "TextureReferencer", menuName = "AssetReferencers/TextureReferencer", order = 0)]
     public sealed class TextureReferencer : ScriptableObject
