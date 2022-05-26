@@ -21,14 +21,14 @@ namespace PixelSim
         {
             _world = new World(_worldRenderer, _worldPhysics, _cameraTransform);
             
-            _world.LoadRegionAtPosition(new Vector2Int(0, 0), true);
+            //_world.LoadRegionAtPosition(new Vector2Int(0, 0), true);
             
-            //LoadInitialRegions();
+            LoadInitialRegions();
         }
 
         private void LateUpdate()
         {
-            //LoadRegionsAroundCamera();
+            LoadRegionsAroundCamera();
         }
 
         private void LoadInitialRegions()

@@ -1,6 +1,6 @@
 #pragma kernel TextureGen
 
-struct Voxel
+struct Pixel
 {
     int id;
 };
@@ -15,7 +15,7 @@ SamplerState _PointRepeatSampler;
 int _ChunkSize;
 float2 _ChunkPos;
 int _PPU;
-StructuredBuffer<Voxel> _PixelBuffer;
+StructuredBuffer<Pixel> _PixelBuffer;
 
 // OUTPUT
 RWTexture2D<float4> _ResultTexture;

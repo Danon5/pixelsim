@@ -11,6 +11,7 @@ namespace PixelSim.Physics
         private static readonly Queue<Chunk> _chunksToRegenerate = new Queue<Chunk>();
         
         private readonly Dictionary<Chunk, ChunkCollider> _registeredChunks = new Dictionary<Chunk, ChunkCollider>();
+        private readonly Dictionary<ChunkCollider, Coroutine> _activeRegenerations = new Dictionary<ChunkCollider, Coroutine>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize()
@@ -31,13 +32,12 @@ namespace PixelSim.Physics
             _chunksToRegenerate.Enqueue(chunk);
             return true;
         }
-        
+
         public void RegisterChunk(Chunk chunk)
         {
-            ChunkCollider chunkRenderer = ChunkColliderPool.RetrieveFromPool(chunk, this, _chunkColliderPrefab);
-            chunkRenderer.Regenerate();
-            
-            _registeredChunks.Add(chunk, chunkRenderer);
+            ChunkCollider chunkCollider = ChunkColliderPool.RetrieveFromPool(chunk, this, _chunkColliderPrefab);
+            _registeredChunks.Add(chunk, chunkCollider);
+            TryQueueChunkForRegeneration(chunk);
         }
         
         public void DeregisterChunk(Chunk chunk)
@@ -60,7 +60,18 @@ namespace PixelSim.Physics
         
         public void RegenerateChunk(Chunk chunk)
         {
-            _registeredChunks[chunk].Regenerate();
+            if (!_registeredChunks.TryGetValue(chunk, out ChunkCollider chunkCollider)) return;
+
+            if (_activeRegenerations.TryGetValue(chunkCollider, out Coroutine regenerationRoutine))
+            {
+                if (chunkCollider.IsRegenerating)
+                {
+                    StopCoroutine(regenerationRoutine);
+                    chunkCollider.DisposeRegeneration();
+                    _activeRegenerations.Remove(chunkCollider);
+                }
+            }
+            _activeRegenerations[chunkCollider] = StartCoroutine(chunkCollider.Regenerate());
         }
     }
 }
