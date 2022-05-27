@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using PixelSim.Rendering;
 using PixelSim.Utility;
@@ -19,7 +18,8 @@ namespace PixelSim.Physics
 
         private PolygonCollider2D _collider;
         private Chunk _chunk;
-        
+
+        private JobHandle _generationJobHandle;
         private NativeArray<Pixel> _nativePixels;
         private NativeList<int> _nativePathLengths;
         private NativeList<Vector2> _nativeVertices;
@@ -81,12 +81,12 @@ namespace PixelSim.Physics
                 checkedIndices = _nativeCheckedIndices
             };
 
-            JobHandle jobHandle = colliderGenerationJob.Schedule();
+            _generationJobHandle = colliderGenerationJob.Schedule();
 
-            while (!jobHandle.IsCompleted)
+            while (!_generationJobHandle.IsCompleted)
                 yield return null;
 
-            jobHandle.Complete();
+            _generationJobHandle.Complete();
 
             _collider.pathCount = _nativePathLengths.Length;
 
@@ -131,6 +131,7 @@ namespace PixelSim.Physics
         {
             if (!IsRegenerating) return;
             
+            _generationJobHandle.Complete();
             _nativePixels.Dispose();
             _nativePathLengths.Dispose();
             _nativeVertices.Dispose();

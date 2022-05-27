@@ -1,4 +1,5 @@
-﻿using PixelSim.Utility;
+﻿using PixelSim.ECS;
+using PixelSim.Utility;
 using UnityEngine;
 
 namespace PixelSim.DeveloperTools
@@ -6,7 +7,7 @@ namespace PixelSim.DeveloperTools
     public sealed class DevController : MonoBehaviour
     {
         [SerializeField] private GameObject _physicsCirclePrefab;
-        [SerializeField] private GameObject _physicsSquarePrefab;
+        [SerializeField] private GameObject _physicsBoxPrefab;
         
         private Camera _camera;
 
@@ -25,9 +26,9 @@ namespace PixelSim.DeveloperTools
                 World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Dirt);
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
-                Instantiate(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
+                ECSManager.CreateEntityFromPrefab(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
             else if (Input.GetKeyDown(KeyCode.Alpha2))
-                Instantiate(_physicsSquarePrefab, worldMousePos, Quaternion.identity);
+                ECSManager.CreateEntityFromPrefab(_physicsBoxPrefab, worldMousePos, Quaternion.identity);
 
             Vector2 moveAxis = new Vector2(
                 Input.GetAxisRaw("Horizontal"), 

@@ -8,7 +8,7 @@ namespace PixelSim
 {
     public sealed class Region
     {
-        public const int SIZE = 8;
+        public const int SIZE = 5;
         public const int SQR_SIZE = SIZE * SIZE;
         
         public static Vector2 ChunkSpaceSize => new Vector2(SIZE, SIZE);
