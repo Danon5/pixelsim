@@ -52,7 +52,7 @@ namespace PixelSim
             {
                 Vector2Int regionPos = cameraRegionPos + new Vector2Int(x, y);
 
-                if (_world.HasRegionAtPosition(regionPos)) continue;
+                if (_world.HasRegionAtRegionPos(regionPos)) continue;
 
                 Vector2 regionWorldPos = SpaceConversions.RegionToWorld(regionPos) + Region.WorldSpaceSize / 2f;
                 float regionDistFromCamera = Vector2.Distance(_cameraTransform.position, regionWorldPos);

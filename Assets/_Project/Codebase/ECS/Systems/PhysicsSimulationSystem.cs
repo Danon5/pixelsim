@@ -4,10 +4,13 @@ using UnityEngine;
 
 namespace PixelSim.ECS.Systems
 {
-    [CreateAssetMenu(fileName = "PhysicsSimulationSystem", menuName = "EntitySystems/PhysicsSimulation")]
+    [CreateAssetMenu(
+        fileName = nameof(PhysicsSimulationSystem), 
+        menuName = "EntitySystems/" + nameof(PhysicsSimulationSystem))]
     public sealed class PhysicsSimulationSystem : EntitySystem
     {
-        public override Archetype RequiredArchetype => new Archetype(typeof(RigidbodyComponent));
+        public override Archetype RequiredArchetype { get; } = new Archetype(
+            typeof(RigidbodyComponent));
 
         public override void FixedTick(in List<Entity> entities)
         {

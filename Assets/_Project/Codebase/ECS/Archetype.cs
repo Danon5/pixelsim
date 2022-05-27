@@ -53,7 +53,7 @@ namespace PixelSim.ECS
 
         public int GetHashCode(Archetype obj)
         {
-            return obj.componentTypes.Sum(type => type.GetHashCode());
+            return obj.componentTypes.Aggregate(0, (current, type) => current ^ type.GetHashCode());
         }
     }
 }

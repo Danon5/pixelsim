@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace PixelSim.ECS.Systems
+namespace PixelSim.ECS
 {
     public abstract class EntitySystem : ScriptableObject
     {

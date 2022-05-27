@@ -2,14 +2,9 @@
 
 namespace PixelSim.ECS.Components
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public sealed class RigidbodyComponent : EntityComponent
     {
-        public Rigidbody2D UnityRigidbody { get; private set; }
-
-        private void Awake()
-        {
-            UnityRigidbody = GetComponent<Rigidbody2D>();
-        }
+        [field: SerializeField] public Rigidbody2D UnityRigidbody { get; set; }
     }
 }

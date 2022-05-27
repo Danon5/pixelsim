@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using PixelSim.ECS.Components;
 using UnityEngine;
 
 namespace PixelSim.ECS

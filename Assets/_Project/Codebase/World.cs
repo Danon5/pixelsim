@@ -35,6 +35,11 @@ namespace PixelSim
             return _activeRegions.TryGetValue(SpaceConversions.WorldToRegion(worldPos), out region);
         }
 
+        public bool TryGetRegionAtRegionPos(in Vector2Int regionPos, out Region region)
+        {
+            return _activeRegions.TryGetValue(regionPos, out region);
+        }
+
         public bool TryGetChunkAtWorldPos(in Vector2 worldPos, out Chunk chunk)
         {
             chunk = null;
@@ -85,9 +90,9 @@ namespace PixelSim
             
         }
 
-        public bool HasRegionAtPosition(in Vector2Int position)
+        public bool HasRegionAtRegionPos(in Vector2Int regionPos)
         {
-            return _activeRegions.ContainsKey(position);
+            return _activeRegions.ContainsKey(regionPos);
         }
         
         public void LoadRegionAtPosition(in Vector2Int position, in bool createNew)

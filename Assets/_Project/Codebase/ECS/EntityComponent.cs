@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PixelSim.ECS.Components
+namespace PixelSim.ECS
 {
     public abstract class EntityComponent : MonoBehaviour
     {
