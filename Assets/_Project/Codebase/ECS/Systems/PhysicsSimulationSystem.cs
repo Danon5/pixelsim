@@ -9,7 +9,7 @@ namespace PixelSim.ECS.Systems
         menuName = "EntitySystems/" + nameof(PhysicsSimulationSystem))]
     public sealed class PhysicsSimulationSystem : EntitySystem
     {
-        public override Archetype RequiredArchetype { get; } = new Archetype(
+        public override Archetype IterationArchetype { get; } = new Archetype(
             typeof(RigidbodyComponent));
 
         public override void FixedTick(in List<Entity> entities)

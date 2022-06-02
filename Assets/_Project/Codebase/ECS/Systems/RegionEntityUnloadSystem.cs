@@ -9,7 +9,7 @@ namespace PixelSim.ECS.Systems
         menuName = "EntitySystems/" + nameof(RegionEntityUnloadSystem))]
     public sealed class RegionEntityUnloadSystem : EntitySystem
     {
-        public override Archetype RequiredArchetype { get; } = new Archetype(
+        public override Archetype IterationArchetype { get; } = new Archetype(
             typeof(RegionTrackerComponent), 
             typeof(UnloadOnRegionUnloadComponent));
 

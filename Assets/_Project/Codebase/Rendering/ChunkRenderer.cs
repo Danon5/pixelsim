@@ -60,7 +60,7 @@ namespace PixelSim.Rendering
             // PARAMETERS
             _chunkTextureCompute.SetInt("_ChunkSize", Chunk.SIZE);
             _chunkTextureCompute.SetVector("_ChunkPos", new Vector4(chunk.position.x, chunk.position.y, 0f, 0f));
-            _chunkTextureCompute.SetInt("_PPU", WorldRenderer.PPU);
+            _chunkTextureCompute.SetInt("_PPU", GameRenderData.PPU);
             _pixelBuffer.SetData(chunk.pixels);
             _chunkTextureCompute.SetBuffer(0, "_PixelBuffer", _pixelBuffer);
             
@@ -68,8 +68,8 @@ namespace PixelSim.Rendering
             _chunkTextureCompute.SetTexture(0, "_ResultTexture", _resultTexture);
             
             _chunkTextureCompute.Dispatch(0, 
-                _resultTexture.width / 8, 
-                _resultTexture.height / 8,
+                Mathf.Max(_resultTexture.width / 8, 1), 
+                Mathf.Max(_resultTexture.height / 8, 1),
                 1);
         }
     }

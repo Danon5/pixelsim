@@ -10,7 +10,7 @@ namespace PixelSim.ECS.Systems
         menuName = "EntitySystems/" + nameof(RegionTrackerSystem))]
     public sealed class RegionTrackerSystem : EntitySystem
     {
-        public override Archetype RequiredArchetype => new Archetype(
+        public override Archetype IterationArchetype => new Archetype(
             typeof(RegionTrackerComponent));
 
         public override void LateTick(in List<Entity> entities)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using PixelSim.Physics;
-using PixelSim.Rendering;
+﻿using System.Collections.Generic;
 using PixelSim.Utility;
 using UnityEngine;
 
@@ -10,23 +7,14 @@ namespace PixelSim
     public sealed class World
     {
         public List<Region> Regions => _availableRegions;
-
-        private readonly WorldRenderer _worldRenderer;
-        private readonly WorldPhysics _worldPhysics;
-        private readonly Transform _cameraTransform;
+        
         private readonly Dictionary<Vector2Int, Region> _activeRegions = new Dictionary<Vector2Int, Region>();
         private readonly List<Region> _availableRegions = new List<Region>();
         
         public static World Current { get; private set; }
 
-        public WorldRenderer Renderer => _worldRenderer;
-        public WorldPhysics Physics => _worldPhysics;
-
-        public World(WorldRenderer worldRenderer, WorldPhysics worldPhysics, Transform cameraTransform)
+        public World()
         {
-            _worldRenderer = worldRenderer;
-            _worldPhysics = worldPhysics;
-            _cameraTransform = cameraTransform;
             Current = this;
         }
         
@@ -61,15 +49,8 @@ namespace PixelSim
             if (!TryGetChunkAtWorldPos(worldPos, out Chunk chunk)) return;
 
             int index = IndexConversions.WorldToPixelIndex(worldPos, chunk);
-
-            PixelId originalId = chunk.pixels[index].id;
+            
             chunk.pixels[index].id = id;
-
-            if (originalId != id)
-            {
-                WorldRenderer.TryQueueChunkForRebuild(chunk);
-                WorldPhysics.TryQueueChunkForRegeneration(chunk);
-            }
         }
 
         public void SetPixelCircleAtPos(in Vector2 worldPos, in int pixelRadius, in PixelId id)
@@ -95,32 +76,18 @@ namespace PixelSim
             return _activeRegions.ContainsKey(regionPos);
         }
         
-        public void LoadRegionAtPosition(in Vector2Int position, in bool createNew)
+        public void CreateRegionAtPosition(in Vector2Int position)
         {
-            if (!createNew && _availableRegions.Count == 0)
-                throw new Exception("Trying to load pooled region when pool is empty.");
-            
-            Region region;
+            Region region = new Region(position);
+            _activeRegions.Add(position, region);
+            _availableRegions.Add(region);
+        }
 
-            if (createNew)
-            {
-                region = new Region(position);
-                _worldRenderer.RegisterRegion(region);
-                _worldPhysics.RegisterRegion(region);
-                _activeRegions.Add(position, region);
-                _availableRegions.Add(region);
-            }
-            else
-            {
-                region = GetFurthestAvailableRegionFromCamera();
-                _worldRenderer.DeregisterRegion(region);
-                _worldPhysics.DeregisterRegion(region);
-                _activeRegions.Remove(region.position);
-                region.Initialize(position);
-                _worldRenderer.RegisterRegion(region);
-                _worldPhysics.RegisterRegion(region);
-                _activeRegions.Add(region.position, region);
-            }
+        public void MoveExistingRegionToPosition(Region region, in Vector2Int position)
+        {
+            _activeRegions.Remove(region.position);
+            region.Initialize(position);
+            _activeRegions.Add(region.position, region);
         }
 
         private void SetPixelCircleFromIndexPos(in Vector2Int rootIndexPos, in int pixelRadius, 
@@ -142,14 +109,7 @@ namespace PixelSim
 
                 int index = IndexConversions.Index2DTo1D(validIndexPos, Chunk.SIZE);
                 
-                PixelId originalId = validChunk.pixels[index].id;
                 validChunk.pixels[index].id = id;
-
-                if (originalId != id)
-                {
-                    WorldRenderer.TryQueueChunkForRebuild(validChunk);
-                    WorldPhysics.TryQueueChunkForRegeneration(validChunk);
-                }
             }
         }
 
@@ -178,25 +138,6 @@ namespace PixelSim
             return
                 pixelIndexPos.x >= 0 && pixelIndexPos.x < Chunk.SIZE &&
                 pixelIndexPos.y >= 0 && pixelIndexPos.y < Chunk.SIZE;
-        }
-        
-        private Region GetFurthestAvailableRegionFromCamera()
-        {
-            float furthestRegionDist = float.MinValue;
-            Region furthestRegion = null;
-
-            foreach (Region region in _availableRegions)
-            {
-                float dist = Vector2.Distance(_cameraTransform.position, region.WorldSpaceCenter);
-
-                if (dist > furthestRegionDist)
-                {
-                    furthestRegionDist = dist;
-                    furthestRegion = region;
-                }
-            }
-
-            return furthestRegion;
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using PixelSim.ECS;
-using PixelSim.Physics;
-using PixelSim.Rendering;
 using PixelSim.Utility;
 using UnityEngine;
 
@@ -9,8 +7,6 @@ namespace PixelSim
     public sealed class GameSimulator : MonoBehaviour
     {
         [SerializeField] private ECSManager _ecsManager;
-        [SerializeField] private WorldRenderer _worldRenderer;
-        [SerializeField] private WorldPhysics _worldPhysics;
         [SerializeField] private Transform _cameraTransform;
 
         private const float REGION_LOAD_DIST = 75f;
@@ -19,9 +15,7 @@ namespace PixelSim
 
         private void Awake()
         {
-            _world = new World(_worldRenderer, _worldPhysics, _cameraTransform);
-            
-            //_world.LoadRegionAtPosition(new Vector2Int(0, 0), true);
+            _world = new World();
             
             LoadInitialRegions();
         }
@@ -29,6 +23,21 @@ namespace PixelSim
         private void LateUpdate()
         {
             LoadRegionsAroundCamera();
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) return;
+
+            foreach (Region region in _world.Regions)
+            {
+                Gizmos.color = Color.green;
+                foreach (Chunk chunk in region.chunks)
+                    Gizmos.DrawWireCube(chunk.WorldSpaceCenter, Chunk.WorldSpaceSize);
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(region.WorldSpaceCenter, Region.WorldSpaceSize);
+            }
         }
 
         private void LoadInitialRegions()
@@ -39,7 +48,7 @@ namespace PixelSim
             for (int y = -1; y <= 1; y++)
             {
                 Vector2Int regionPos = cameraRegionPos + new Vector2Int(x, y);
-                _world.LoadRegionAtPosition(regionPos, true);
+                _world.CreateRegionAtPosition(regionPos);
             }
         }
 
@@ -58,23 +67,27 @@ namespace PixelSim
                 float regionDistFromCamera = Vector2.Distance(_cameraTransform.position, regionWorldPos);
 
                 if (regionDistFromCamera < REGION_LOAD_DIST)
-                    _world.LoadRegionAtPosition(regionPos, false);
+                    _world.MoveExistingRegionToPosition(GetFurthestAvailableRegionFromCamera(), regionPos);
             }
         }
-
-        private void OnDrawGizmos()
+        
+        private Region GetFurthestAvailableRegionFromCamera()
         {
-            if (!Application.isPlaying) return;
+            float furthestRegionDist = float.MinValue;
+            Region furthestRegion = null;
 
             foreach (Region region in _world.Regions)
             {
-                Gizmos.color = Color.green;
-                foreach (Chunk chunk in region.chunks)
-                    Gizmos.DrawWireCube(chunk.WorldSpaceCenter, Chunk.WorldSpaceSize);
+                float dist = Vector2.Distance(_cameraTransform.position, region.WorldSpaceCenter);
 
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(region.WorldSpaceCenter, Region.WorldSpaceSize);
+                if (dist > furthestRegionDist)
+                {
+                    furthestRegionDist = dist;
+                    furthestRegion = region;
+                }
             }
+
+            return furthestRegion;
         }
     }
 }

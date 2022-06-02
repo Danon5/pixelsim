@@ -12,8 +12,9 @@ Texture2D _Tex_Dirt_Course;
 SamplerState _PointRepeatSampler;
 
 // PARAMETERS
-int _ChunkSize;
-float2 _ChunkPos;
+int _TextureWidth;
+int _TextureHeight;
+float2 _WorldPosition;
 int _PPU;
 StructuredBuffer<Pixel> _PixelBuffer;
 
@@ -22,9 +23,14 @@ RWTexture2D<float4> _ResultTexture;
 
 float2 CalcWorldPos(uint3 i)
 {
-    float4 worldPos = float4(i.x / (float) _ChunkSize, i.y / (float) _ChunkSize, 0, 0);
-    worldPos.x += _ChunkPos.x * (float) _ChunkSize / (float) _PPU;
-    worldPos.y += _ChunkPos.y * (float) _ChunkSize / (float) _PPU;
+    int smallestDimension = _TextureWidth;
+    
+    if (_TextureHeight < smallestDimension)
+        smallestDimension = _TextureHeight;
+
+    float4 worldPos = float4(i.x / (float) smallestDimension, i.y / (float) smallestDimension, 0, 0);
+    worldPos.x += _WorldPosition.x / (float) smallestDimension * (float) _PPU;
+    worldPos.y += _WorldPosition.y / (float) smallestDimension * (float) _PPU;
     
     return worldPos;
 }
@@ -37,7 +43,7 @@ float CalcDistFromAir(float2 worldPos, int maxCheckRange)
 [numthreads(8,8,1)]
 void TextureGen (uint3 i : SV_DispatchThreadID)
 {
-    int id = _PixelBuffer[i.x * _ChunkSize + i.y].id;
+    int id = _PixelBuffer[i.x * _TextureHeight + i.y].id;
     
     if (id == 0)
     {

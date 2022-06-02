@@ -373,7 +373,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Graphics>k__BackingField:
-  - {fileID: 358457720}
   - {fileID: 1721170814}
   <OnClick>k__BackingField:
     m_PersistentCalls:
@@ -440,7 +439,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Graphics>k__BackingField:
-  - {fileID: 492010698}
   - {fileID: 1943133451}
   <OnClick>k__BackingField:
     m_PersistentCalls:
@@ -887,7 +885,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Graphics>k__BackingField:
-  - {fileID: 1132037852}
   - {fileID: 214066080}
   <OnClick>k__BackingField:
     m_PersistentCalls:

@@ -10,17 +10,12 @@ namespace PixelSim.ECS
 
         public Archetype Archetype { get; } = new Archetype { componentTypes = new HashSet<Type>() };
         
-        private readonly List<EntityComponent> _components = new List<EntityComponent>();
-
-        private void Awake()
-        {
-            AddExistingComponents();
-        }
+        public readonly List<EntityComponent> components = new List<EntityComponent>();
 
         public T AddComponent<T>() where T : EntityComponent
         {
             T newComponent = gameObject.AddComponent<T>();
-            _components.Add(newComponent);
+            components.Add(newComponent);
             Archetype oldArchetype = new Archetype();
             Archetype.componentTypes.Add(newComponent.GetType());
             
@@ -31,7 +26,7 @@ namespace PixelSim.ECS
 
         public new T GetComponent<T>() where T : EntityComponent
         {
-            foreach (EntityComponent component in _components)
+            foreach (EntityComponent component in components)
             {
                 if (component is T tComponent)
                     return tComponent;
@@ -51,23 +46,26 @@ namespace PixelSim.ECS
         {
             if (!TryGetComponent(out T component)) return false;
             
-            _components.Remove(component);
+            components.Remove(component);
             Archetype oldArchetype = new Archetype();
             Archetype.componentTypes.Remove(component.GetType());
             Destroy(component);
             
             ComponentChangedEvent?.Invoke(this, oldArchetype);
             
+            if (component is IDisposable disposable)
+                disposable.Dispose();
+            
             return true;
         }
 
-        private void AddExistingComponents()
+        public void AddExistingComponents()
         {
             Archetype oldArchetype = new Archetype();
 
             foreach (EntityComponent existingComponent in GetComponents<EntityComponent>())
             {
-                _components.Add(existingComponent);
+                components.Add(existingComponent);
                 Archetype.componentTypes.Add(existingComponent.GetType());
             }
 

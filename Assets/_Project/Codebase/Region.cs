@@ -1,5 +1,4 @@
-﻿using PixelSim.Physics;
-using PixelSim.Rendering;
+﻿using PixelSim.Rendering;
 using PixelSim.Utility;
 using PixelSim.WorldGeneration;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace PixelSim
         public const int SQR_SIZE = SIZE * SIZE;
         
         public static Vector2 ChunkSpaceSize => new Vector2(SIZE, SIZE);
-        public static Vector2 WorldSpaceSize => ChunkSpaceSize * Chunk.SIZE / WorldRenderer.PPU;
+        public static Vector2 WorldSpaceSize => ChunkSpaceSize * Chunk.SIZE / GameRenderData.PPU;
 
         public Vector2Int position;
         public readonly Chunk[] chunks;
@@ -23,7 +22,7 @@ namespace PixelSim
         public Vector2Int ChunkSpaceOrigin => position * SIZE;
         public Vector2 ChunkSpaceCenter => ChunkSpaceOrigin + ChunkSpaceSize / 2f;
 
-        public Vector2Int WorldSpaceOrigin => ChunkSpaceOrigin * Chunk.SIZE / WorldRenderer.PPU;
+        public Vector2Int WorldSpaceOrigin => ChunkSpaceOrigin * Chunk.SIZE / GameRenderData.PPU;
         public Vector2 WorldSpaceCenter => WorldSpaceOrigin + WorldSpaceSize / 2f;
 
         public Region(in Vector2Int position)
@@ -79,8 +78,6 @@ namespace PixelSim
         private async void GenerateChunkAsync(Chunk chunk)
         {
             await WorldGenerator.GenerateChunk(chunk);
-            WorldRenderer.TryQueueChunkForRebuild(chunk);
-            WorldPhysics.TryQueueChunkForRegeneration(chunk);
         }
     }
 }

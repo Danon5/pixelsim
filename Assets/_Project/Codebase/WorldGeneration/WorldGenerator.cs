@@ -57,8 +57,8 @@ namespace PixelSim.WorldGeneration
                 int xIndex = index / Chunk.SIZE;
                 int yIndex = index % Chunk.SIZE;
 
-                float x = chunkOrigin.x + (float) xIndex / WorldRenderer.PPU;
-                float y = chunkOrigin.y + (float) yIndex / WorldRenderer.PPU;
+                float x = chunkOrigin.x + (float) xIndex / GameRenderData.PPU;
+                float y = chunkOrigin.y + (float) yIndex / GameRenderData.PPU;
 
                 float perlinResult1 = Mathf.PerlinNoise(seed + x * .25f, seed + y * .25f);
                 float perlinResult2 = Mathf.PerlinNoise(seed + x * .75f, seed + y * .75f) * .15f;

@@ -1,104 +1,64 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using PixelSim.Rendering;
 using PixelSim.Utility;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-
 namespace PixelSim.Physics
 {
-    [RequireComponent(typeof(PolygonCollider2D))]
-    public sealed class ChunkCollider : MonoBehaviour
+    public sealed class PixelColliderGenerator
     {
-        public bool IsRegenerating { get; private set; }
+        public JobHandle GenerationJobHandle { get; set; }
+        public NativeArray<Pixel> NativePixels { get; set; }
+        public NativeList<int> NativePathLengths { get; set; }
+        public NativeList<Vector2> NativeVertices { get; set; }
+        public NativeHashSet<Vector2Int> NativeCheckedIndices { get; set; }
+        public bool IsGenerating { get; private set; }
         
         private const float PATH_SIMPLIFICATION_TOLERANCE = .05f;
+        
+        private CancellationToken _cancellationToken;
 
-        private PolygonCollider2D _collider;
-        private Chunk _chunk;
-
-        private JobHandle _generationJobHandle;
-        private NativeArray<Pixel> _nativePixels;
-        private NativeList<int> _nativePathLengths;
-        private NativeList<Vector2> _nativeVertices;
-        private NativeHashSet<Vector2Int> _nativeCheckedIndices;
-
-        private void Awake()
+        public IEnumerator RegenerateRoutine(Pixel[] pixels, PolygonCollider2D collider, int width, int height)
         {
-            _collider = GetComponent<PolygonCollider2D>();
-        }
+            IsGenerating = true;
 
-        private void OnDestroy()
-        {
-            DisposeRegeneration(); 
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.cyan;
-            for (int i = 0; i < _collider.pathCount; i++)
-            {
-                Vector2[] path = _collider.GetPath(i);
-
-                for (int j = 0; j < path.Length; j++)
-                {
-                    Vector2 pathNode = path[j];
-                    Vector2 nextNode = j == path.Length - 1 ? path[0] : path[j + 1];
-
-                    Gizmos.DrawLine(
-                        (Vector2) transform.position + pathNode,
-                        (Vector2) transform.position + nextNode);
-                }
-            }
-        }
-
-        public void AssignChunk(in Chunk chunk)
-        {
-            _chunk = chunk;
-        }
-
-        public void Clear()
-        {
-            _collider.pathCount = 0;
-        }
-
-        public IEnumerator Regenerate()
-        {
-            IsRegenerating = true;
-
-            _nativePixels = new NativeArray<Pixel>(_chunk.pixels, Allocator.Persistent);
-            _nativePathLengths = new NativeList<int>(0, AllocatorManager.Persistent);
-            _nativeVertices = new NativeList<Vector2>(0, AllocatorManager.Persistent);
-            _nativeCheckedIndices = new NativeHashSet<Vector2Int>(0, AllocatorManager.Persistent);
+            NativePixels = new NativeArray<Pixel>(pixels, Allocator.Persistent);
+            NativePathLengths = new NativeList<int>(0, AllocatorManager.Persistent);
+            NativeVertices = new NativeList<Vector2>(0, AllocatorManager.Persistent);
+            NativeCheckedIndices = new NativeHashSet<Vector2Int>(0, AllocatorManager.Persistent);
 
             ColliderGenerationJob colliderGenerationJob = new ColliderGenerationJob
             {
-                pixels = _nativePixels,
-                pathLengths = _nativePathLengths,
-                vertices = _nativeVertices,
-                checkedIndices = _nativeCheckedIndices
+                pixels = NativePixels,
+                width = width,
+                height = height,
+                pathLengths = NativePathLengths,
+                vertices = NativeVertices,
+                checkedIndices = NativeCheckedIndices
             };
 
-            _generationJobHandle = colliderGenerationJob.Schedule();
+            GenerationJobHandle = colliderGenerationJob.Schedule();
 
-            while (!_generationJobHandle.IsCompleted)
+            while (!GenerationJobHandle.IsCompleted)
                 yield return null;
 
-            _generationJobHandle.Complete();
+            GenerationJobHandle.Complete();
 
-            _collider.pathCount = _nativePathLengths.Length;
+            collider.pathCount = NativePathLengths.Length;
 
-            if (_collider.pathCount == 0)
+            if (collider.pathCount == 0)
             {
-                DisposeRegeneration();
+                Dispose();
                 yield break;
             }
 
             int maxLength = 0;
 
-            foreach (int length in _nativePathLengths)
+            foreach (int length in NativePathLengths)
             {
                 if (length > maxLength)
                     maxLength = length;
@@ -108,41 +68,43 @@ namespace PixelSim.Physics
             List<Vector2> simplifiedVertices = new List<Vector2>();
             int pathIndexOffset = 0;
 
-            for (int i = 0; i < _collider.pathCount; i++)
+            for (int i = 0; i < collider.pathCount; i++)
             {
                 rawVertices.Clear();
                 simplifiedVertices.Clear();
 
-                int pathLength = _nativePathLengths[i];
+                int pathLength = NativePathLengths[i];
                 
                 for (int j = 0; j < pathLength; j++)
-                    rawVertices.Add(_nativeVertices[pathIndexOffset + j]);
+                    rawVertices.Add(NativeVertices[pathIndexOffset + j]);
 
                 LineUtility.Simplify(rawVertices, PATH_SIMPLIFICATION_TOLERANCE, simplifiedVertices);
-                _collider.SetPath(i, simplifiedVertices);
+                collider.SetPath(i, simplifiedVertices);
 
                 pathIndexOffset += pathLength;
             }
 
-            DisposeRegeneration();
+            Dispose();
         }
 
-        public void DisposeRegeneration()
+        public void Dispose()
         {
-            if (!IsRegenerating) return;
+            if (!IsGenerating) return;
             
-            _generationJobHandle.Complete();
-            _nativePixels.Dispose();
-            _nativePathLengths.Dispose();
-            _nativeVertices.Dispose();
-            _nativeCheckedIndices.Dispose();
-            IsRegenerating = false;
+            GenerationJobHandle.Complete();
+            NativePixels.Dispose();
+            NativePathLengths.Dispose();
+            NativeVertices.Dispose();
+            NativeCheckedIndices.Dispose();
+            IsGenerating = false;
         }
 
         [BurstCompile]
         private struct ColliderGenerationJob : IJob
         {
             [ReadOnly] public NativeArray<Pixel> pixels;
+            [ReadOnly] public int width;
+            [ReadOnly] public int height;
 
             [WriteOnly] public NativeList<int> pathLengths;
             [WriteOnly] public NativeList<Vector2> vertices;
@@ -226,7 +188,7 @@ namespace PixelSim.Physics
                             currentDirection = right;
                     }
 
-                    vertices.Add((Vector2)currentIndex / WorldRenderer.PPU);
+                    vertices.Add((Vector2)currentIndex / GameRenderData.PPU);
                     checkedIndices.Add(currentIndex);
                     currentIndex += currentDirection;
                     pathLength++;

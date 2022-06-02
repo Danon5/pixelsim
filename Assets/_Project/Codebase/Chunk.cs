@@ -10,7 +10,7 @@ namespace PixelSim
         public const int SQR_SIZE = SIZE * SIZE;
         
         public static Vector2 PixelSpaceSize => Vector2.one * SIZE;
-        public static Vector2 WorldSpaceSize => PixelSpaceSize / WorldRenderer.PPU;
+        public static Vector2 WorldSpaceSize => PixelSpaceSize / GameRenderData.PPU;
 
         public readonly Pixel[] pixels;
         
@@ -22,7 +22,7 @@ namespace PixelSim
         public Vector2Int PixelSpaceOrigin => position * SIZE;
         public Vector2 PixelSpaceCenter => PixelSpaceOrigin + PixelSpaceSize / 2f;
 
-        public Vector2Int WorldSpaceOrigin => PixelSpaceOrigin / WorldRenderer.PPU;
+        public Vector2Int WorldSpaceOrigin => PixelSpaceOrigin / GameRenderData.PPU;
         public Vector2 WorldSpaceCenter => WorldSpaceOrigin + WorldSpaceSize / 2f;
 
         public Chunk(in Vector2Int position)

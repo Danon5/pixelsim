@@ -26,9 +26,9 @@ namespace PixelSim.DeveloperTools
                 World.Current.SetPixelCircleAtPos(worldMousePos, 25, PixelId.Dirt);
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
-                ECSManager.CreateEntityFromPrefab(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
+                ECSManager.InstantiateEntityFromPrefab(_physicsCirclePrefab, worldMousePos, Quaternion.identity);
             else if (Input.GetKeyDown(KeyCode.Alpha2))
-                ECSManager.CreateEntityFromPrefab(_physicsBoxPrefab, worldMousePos, Quaternion.identity);
+                ECSManager.InstantiateEntityFromPrefab(_physicsBoxPrefab, worldMousePos, Quaternion.identity);
 
             Vector2 moveAxis = new Vector2(
                 Input.GetAxisRaw("Horizontal"), 
