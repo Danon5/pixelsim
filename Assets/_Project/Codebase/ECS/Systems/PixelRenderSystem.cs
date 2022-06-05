@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using PixelSim.Backend;
 using PixelSim.ECS.Components;
-using PixelSim.Rendering;
 using PixelSim.Utility;
 using UnityEngine;
 

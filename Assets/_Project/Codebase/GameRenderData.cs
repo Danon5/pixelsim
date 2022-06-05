@@ -1,4 +1,4 @@
-﻿namespace PixelSim.Rendering
+﻿namespace PixelSim
 {
     public static class GameRenderData
     {

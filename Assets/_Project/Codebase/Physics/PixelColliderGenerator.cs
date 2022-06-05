@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using PixelSim.Rendering;
 using PixelSim.Utility;
 using Unity.Burst;
 using Unity.Collections;
@@ -36,6 +35,7 @@ namespace PixelSim.Physics
                 pixels = NativePixels,
                 width = width,
                 height = height,
+                size = width * height,
                 pathLengths = NativePathLengths,
                 vertices = NativeVertices,
                 checkedIndices = NativeCheckedIndices
@@ -105,6 +105,7 @@ namespace PixelSim.Physics
             [ReadOnly] public NativeArray<Pixel> pixels;
             [ReadOnly] public int width;
             [ReadOnly] public int height;
+            [ReadOnly] public int size;
 
             [WriteOnly] public NativeList<int> pathLengths;
             [WriteOnly] public NativeList<Vector2> vertices;
@@ -119,8 +120,8 @@ namespace PixelSim.Physics
                 Vector2Int right = new Vector2Int(1, 0);
                 Vector2Int one = new Vector2Int(1, 1);
                 
-                for (int x = 0; x < Chunk.SIZE; x++)
-                for (int y = 0; y < Chunk.SIZE; y++)
+                for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
                 {
                     Vector2Int index = new Vector2Int(x, y);
 
@@ -137,7 +138,7 @@ namespace PixelSim.Physics
                 Vector2Int currentIndex = originIndex;
                 Vector2Int currentDirection = up;
 
-                int maxIterations = Chunk.SQR_SIZE / 2;
+                int maxIterations = size / 2;
 
                 int pathLength = 0;
 
@@ -200,11 +201,11 @@ namespace PixelSim.Physics
 
             private bool IsSolidPixelIndex(in Vector2Int index)
             {
-                if (index.x < 0 || index.x >= Chunk.SIZE ||
-                    index.y < 0 || index.y >= Chunk.SIZE)
+                if (index.x < 0 || index.x >= width ||
+                    index.y < 0 || index.y >= height)
                     return false;
 
-                int nativeIndex = IndexConversions.Index2DTo1D(index, Chunk.SIZE);
+                int nativeIndex = IndexConversions.Index2DTo1D(index, size);
 
                 return pixels[nativeIndex].id != PixelId.Air;
             }

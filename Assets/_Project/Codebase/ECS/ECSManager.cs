@@ -8,7 +8,7 @@ namespace PixelSim.ECS
     {
         [SerializeField] private List<EntitySystem> _initialSystems;
         
-        private readonly Dictionary<Archetype, EntitySystem> _activeSystems = new Dictionary<Archetype, EntitySystem>();
+        private readonly Dictionary<Archetype, List<EntitySystem>> _systemGroups = new Dictionary<Archetype, List<EntitySystem>>();
         private readonly Dictionary<Archetype, List<Entity>> _entityGroups = new Dictionary<Archetype, List<Entity>>();
 
         private static ECSManager _singleton;
@@ -29,39 +29,51 @@ namespace PixelSim.ECS
 
         private void Update()
         {
-            foreach ((Archetype archetype, EntitySystem system) in _activeSystems)
+            foreach ((Archetype archetype, List<EntitySystem> systems) in _systemGroups)
             {
-                if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
-                    system.Tick(entitiesWithArchetype);
+                foreach (EntitySystem system in systems)
+                {
+                    if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
+                        system.Tick(entitiesWithArchetype);
+                }
             }
         }
         
         private void FixedUpdate()
         {
-            foreach ((Archetype archetype, EntitySystem system) in _activeSystems)
+            foreach ((Archetype archetype, List<EntitySystem> systems) in _systemGroups)
             {
-                if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
-                    system.FixedTick(entitiesWithArchetype);
+                foreach (EntitySystem system in systems)
+                {
+                    if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
+                        system.FixedTick(entitiesWithArchetype);
+                }
             }
         }
         
         private void LateUpdate()
         {
-            foreach ((Archetype archetype, EntitySystem system) in _activeSystems)
+            foreach ((Archetype archetype, List<EntitySystem> systems) in _systemGroups)
             {
-                if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
-                    system.LateTick(entitiesWithArchetype);
+                foreach (EntitySystem system in systems)
+                {
+                    if (TryGetEntitiesWithArchetype(archetype, out List<Entity> entitiesWithArchetype))
+                        system.LateTick(entitiesWithArchetype);
+                }
             }
         }
 
         public static void InstantiateAndAddSystem(in EntitySystem system)
         {
-            Archetype requiredArchetype = system.IterationArchetype;
+            Archetype iterationArchetype = system.IterationArchetype;
             
-            if (!_singleton._entityGroups.ContainsKey(requiredArchetype))
-                _singleton._entityGroups.Add(requiredArchetype, new List<Entity>());
+            if (!_singleton._entityGroups.ContainsKey(iterationArchetype))
+                _singleton._entityGroups.Add(iterationArchetype, new List<Entity>());
+            
+            if (!_singleton._systemGroups.ContainsKey(iterationArchetype))
+                _singleton._systemGroups.Add(iterationArchetype, new List<EntitySystem>());
 
-            _singleton._activeSystems[requiredArchetype] = Instantiate(system);
+            _singleton._systemGroups[iterationArchetype].Add(Instantiate(system));
         }
 
         public static Entity InstantiateEntity()
@@ -118,9 +130,12 @@ namespace PixelSim.ECS
                 else if (!containsEntity && entityBelongsInGroup)
                 {
                     entityGroup.Add(entity);
-                    
-                    if (_activeSystems.TryGetValue(groupArchetype, out EntitySystem system))
-                        system.InitializeEntity(entity);
+
+                    if (_systemGroups.TryGetValue(groupArchetype, out List<EntitySystem> systems))
+                    {
+                        foreach (EntitySystem system in systems)
+                            system.InitializeEntity(entity);
+                    }
                 }
             }
         }

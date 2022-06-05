@@ -1,5 +1,4 @@
-﻿using PixelSim.Rendering;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PixelSim
 {
