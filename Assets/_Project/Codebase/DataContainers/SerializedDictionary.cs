@@ -46,7 +46,11 @@ namespace PixelSim.DataContainers
         public bool TryAdd(TKey key, TValue value)
         {
             InitializeIfRequired();
-            return _data.TryAdd(key, value);
+
+            if (_data.ContainsKey(key)) return false;
+            
+            _data.Add(key, value);
+            return true;
         }
 
         public void Add(TKey key, TValue value)
