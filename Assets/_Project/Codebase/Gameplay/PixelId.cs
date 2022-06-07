@@ -1,4 +1,4 @@
-﻿namespace PixelSim
+﻿namespace PixelSim.Gameplay
 {
     public enum PixelId
     {

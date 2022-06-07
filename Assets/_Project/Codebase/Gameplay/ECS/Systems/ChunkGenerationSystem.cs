@@ -24,8 +24,8 @@ namespace PixelSim.Gameplay.ECS.Systems
                     ref DynamicBuffer<ChunkPixelBufferElement> pixelBuffer,
                     in Entity entity) =>
                 {
-                    for (int i = 0; i < 32 * 32; i++)
-                        pixelBuffer.Add(new Pixel(PixelMaterialType.Dirt));
+                    for (int i = 0; i < GameConstants.CHUNK_SIZE_SQR; i++)
+                        pixelBuffer.Add(new ChunkPixelBufferElement { materialType = PixelMaterialType.Dirt });
                     commandBuffer.RemoveComponent(entity, typeof(ChunkRequiresInitializationTag));
                 }).Run();
         }

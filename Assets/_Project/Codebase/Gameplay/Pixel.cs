@@ -1,12 +1,16 @@
-﻿namespace PixelSim.Gameplay
+﻿using UnityEngine;
+
+namespace PixelSim.Gameplay
 {
     public struct Pixel
     {
-        public Pixel(PixelMaterialType materialType)
-        {
-            this.materialType = materialType;
-        }
+        public static Vector2 WorldSpaceSize => Vector2.one / GameConstants.PPU; 
         
-        public PixelMaterialType materialType;
+        public PixelId id;
+
+        public Pixel(PixelId id)
+        {
+            this.id = id;
+        }
     }
 }
