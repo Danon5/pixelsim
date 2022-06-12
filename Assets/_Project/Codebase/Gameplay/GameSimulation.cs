@@ -20,17 +20,20 @@ namespace PixelSim.Gameplay
                 World.DefaultGameObjectInjectionWorld.CreateSystem<ChunkGenerationSystem>(),
                 World.DefaultGameObjectInjectionWorld.CreateSystem<ChunkRendererSystem>()
             };
-            
-            World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(
-                typeof(IntPositionComponent),
-                typeof(ChunkPixelBufferElement),
-                typeof(ChunkRequiresGenerationTag));
         }
 
         private void Update()
         {
             foreach (SystemBase system in _updateSystems.Where(system => system.ShouldRunSystem()))
                 system.Update();
+        }
+
+        private void CreateChunk()
+        {
+            World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(
+                typeof(IntPositionComponent),
+                typeof(ChunkPixelBufferElement),
+                typeof(ChunkRequiresGenerationTag));
         }
     }
 }

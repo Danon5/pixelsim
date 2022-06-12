@@ -2,7 +2,7 @@
 {
     public enum PixelMaterialType
     {
-        Air,
-        Dirt,
+        Air = 0,
+        Dirt = 1,
     }
 }

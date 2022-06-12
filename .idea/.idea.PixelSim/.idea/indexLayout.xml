@@ -9,6 +9,7 @@
       <Path>$USER_HOME$/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.transport@1.0.0</Path>
     </attachedFolders>
     <explicitIncludes>
+      <Path>Library/PackageCache/com.unity.2d.sprite@1.0.0</Path>
       <Path>Library/PackageCache/com.unity.burst@1.8.0-pre.1</Path>
       <Path>Library/PackageCache/com.unity.collections@1.2.3</Path>
       <Path>Library/PackageCache/com.unity.entities@0.50.1-preview.2</Path>
@@ -84,6 +85,7 @@
     <explicitExcludes>
       <Path>.git</Path>
       <Path>.idea</Path>
+      <Path>Builds</Path>
       <Path>Data</Path>
       <Path>Library</Path>
       <Path>Logs</Path>

@@ -27,7 +27,7 @@ namespace PixelSim.Gameplay.ECS.Systems
                 {
                     for (int i = 0; i < GameConstants.CHUNK_SIZE_SQR; i++)
                         pixelBuffer.Add(new ChunkPixelBufferElement { materialType = PixelMaterialType.Dirt });
-                    commandBuffer.RemoveComponent(entity, typeof(ChunkRequiresGenerationTag));
+                    commandBuffer.RemoveComponent<ChunkRequiresGenerationTag>(entity);
                     commandBuffer.AddComponent<ChunkRequiresTextureUpdateTag>(entity);
                 }).Run();
         }

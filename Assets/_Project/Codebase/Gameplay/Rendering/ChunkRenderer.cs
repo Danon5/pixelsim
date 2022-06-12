@@ -19,11 +19,11 @@ namespace PixelSim.Gameplay.Rendering
         private RenderTexture _solidRenderTexture;
         private RenderTexture _liquidRenderTexture;
 
-        private unsafe void Awake()
+        private void Awake()
         {
             const int size = GameConstants.CHUNK_SIZE;
             const int sqr_size = GameConstants.CHUNK_SIZE_SQR;
-            int stride = sizeof(ChunkPixelBufferElement);
+            const int stride = 4;
 
             _pixelBuffer = new ComputeBuffer(sqr_size, stride, ComputeBufferType.Structured);
             _solidRenderTexture = CreateRenderTexture(size, size);

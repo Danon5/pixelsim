@@ -1,0 +1,21 @@
+{
+    "Show": true,
+    "Dependencies": [
+        "GlobalObjectId_V1-1-1c32d6cd646daf94e8ef627f2e5e62a4-93214019566545601-0",
+        "GlobalObjectId_V1-1-a3bc58e49cd5f41429c23a7b69ff8e4d-93214019566545601-0"
+    ],
+    "Components": [
+        {
+            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
+            "$version": 1,
+            "Platform": "StandaloneWindows64",
+            "Configuration": 3
+        },
+        {
+            "$type": "Unity.Build.Common.GeneralSettings, Unity.Build",
+            "ProductName": "PixelSim",
+            "CompanyName": "GarbageGames",
+            "Version": "0.0"
+        }
+    ]
+}
