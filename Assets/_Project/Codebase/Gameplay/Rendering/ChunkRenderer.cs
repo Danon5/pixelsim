@@ -1,4 +1,5 @@
-﻿using PixelSim.Gameplay.ECS.BufferElements;
+﻿using System;
+using PixelSim.Gameplay.ECS.BufferElements;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,10 +36,25 @@ namespace PixelSim.Gameplay.Rendering
             _liquidRenderImage.rectTransform.sizeDelta = renderImageSizeDelta;
         }
 
+        private void OnDestroy()
+        {
+            _pixelBuffer.Release();
+            _solidRenderTexture.Release();
+            _liquidRenderTexture.Release();
+        }
+
         public void UpdateRenderTextures(in NativeArray<ChunkPixelBufferElement> pixelBuffer)
         {
             _pixelBuffer.SetData(pixelBuffer);
+            
+            _chunkTextureCompute.SetInt("ChunkSize", GameConstants.CHUNK_SIZE);
             _chunkTextureCompute.SetBuffer(0, "PixelBuffer", _pixelBuffer);
+            _chunkTextureCompute.SetTexture(0, "SolidRenderTexture", _solidRenderTexture);
+            
+            _chunkTextureCompute.Dispatch(0,
+                Mathf.Max(GameConstants.CHUNK_SIZE / 8, 1),
+                Mathf.Max(GameConstants.CHUNK_SIZE / 8, 1),
+                1);
         }
 
         private RenderTexture CreateRenderTexture(in int width, in int height)

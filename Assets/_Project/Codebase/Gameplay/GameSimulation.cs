@@ -17,13 +17,14 @@ namespace PixelSim.Gameplay
         {
             _updateSystems = new List<SystemBase>
             {
-                World.DefaultGameObjectInjectionWorld.CreateSystem<ChunkGenerationSystem>()
+                World.DefaultGameObjectInjectionWorld.CreateSystem<ChunkGenerationSystem>(),
+                World.DefaultGameObjectInjectionWorld.CreateSystem<ChunkRendererSystem>()
             };
             
             World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(
                 typeof(IntPositionComponent),
                 typeof(ChunkPixelBufferElement),
-                typeof(ChunkRequiresInitializationTag));
+                typeof(ChunkRequiresGenerationTag));
         }
 
         private void Update()

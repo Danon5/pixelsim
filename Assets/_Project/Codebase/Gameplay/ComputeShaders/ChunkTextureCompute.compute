@@ -1,14 +1,24 @@
-// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel GenerateTexture
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-RWTexture2D<float4> Result;
+struct ChunkPixelBufferElement
+{
+    int materialType;
+};
+
+int ChunkSize;
+StructuredBuffer<ChunkPixelBufferElement> PixelBuffer;
+RWTexture2D<float4> SolidRenderTexture;
 
 [numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void GenerateTexture(uint3 id : SV_DispatchThreadID)
 {
-    // TODO: insert actual code here!
+    int index = id.y * ChunkSize + id.x;
+    
+    ChunkPixelBufferElement pixel = PixelBuffer[index];
 
-    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+    if (pixel.materialType == 0)
+        SolidRenderTexture[id.xy] = float4(0, 0, 0, 0);
+    else
+        SolidRenderTexture[id.xy] = float4(1, 1, 1, 1);
 }
+  

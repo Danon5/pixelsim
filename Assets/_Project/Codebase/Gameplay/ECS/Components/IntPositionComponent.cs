@@ -5,6 +5,6 @@ namespace PixelSim.Gameplay.ECS.Components
 {
     public struct IntPositionComponent : IComponentData
     {
-        public int2 position;
+        public int2 value;
     }
 }

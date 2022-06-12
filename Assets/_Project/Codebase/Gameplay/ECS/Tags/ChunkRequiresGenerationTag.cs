@@ -2,7 +2,7 @@
 
 namespace PixelSim.Gameplay.ECS.Tags
 {
-    public struct ChunkRequiresInitializationTag : IComponentData
+    public struct ChunkRequiresGenerationTag : IComponentData
     {
         
     }
