@@ -99,13 +99,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.9",
+    "com.unity.netcode": {
+      "version": "0.50.1-preview.19",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.nuget.mono-cecil": "1.10.1",
-        "com.unity.transport": "1.0.0"
+        "com.unity.transport": "1.0.0-pre.15",
+        "com.unity.entities": "0.50.1-preview.2"
       },
       "url": "https://packages.unity.com"
     },
@@ -299,11 +299,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.0.0",
+      "version": "1.0.0-pre.15",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.collections": "1.2.3",
+        "com.unity.collections": "1.1.0",
         "com.unity.burst": "1.6.4",
         "com.unity.mathematics": "1.2.5"
       },
